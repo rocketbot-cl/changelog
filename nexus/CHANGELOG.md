@@ -106,10 +106,12 @@ Cada versión tiene dos partes:
 **Nuevo**
 
 - Nuevo data source AiStudio Rocketbot: conectá una aplicación a AiStudio y consultá sus tasks y resultados como tablas. Es de solo lectura.
+- **Gateway On-Premises con SQL Server:** ahora te podés conectar con autenticación de Windows, sin usuario ni contraseña.
 
 **Corregido**
 
 - Los data sources de tipo **Rocketbot Orchestrator** vuelven a mostrar su ícono en el listado.
+- **Gateway On-Premises con SQL Server:** las consultas con filtros, la paginación y las altas, modificaciones y borrados ahora funcionan. También se corrigieron las consultas con filtros en PostgreSQL. Requiere instalar la versión nueva del gateway.
 
 **Mejorado**
 
@@ -201,6 +203,7 @@ Cada versión tiene dos partes:
 | NEX-97 | Restaurar contraseña |
 | NEX-98 | Clonar screen |
 | NEX-101 | Opciones avanzadas de Table Data |
+| NEX-103 | Gateway: SQL Server (T-SQL y Trusted Connection) y parámetros de PostgreSQL |
 | NEX-104 | Pantalla de inicio por usuario |
 | NEX-105 | Mover elementos entre contenedores y el canvas |
 | NEX-116 | Fixes menores de screen |
@@ -248,6 +251,7 @@ Cada versión tiene dos partes:
 | `feature/preview-mode` | #105 |
 | `feature/iframe-element` | #106 |
 | `feature/logs-humans` | #107 |
+| `fix/gateway-mssql` | PR pendiente |
 
 #### Base de datos
 
@@ -295,12 +299,15 @@ El proyecto no usa archivos de migración: los cambios de `backend/prisma/schema
 - **MCP:** con una key `READ_ONLY`, `createMcpServer` solo registra las herramientas de lectura de `READ_ONLY_TOOLS` y ningún prompt. `execute_query` solo acepta queries de tipo `READ`. Cada llamada a herramienta, resource o prompt, cada `initialize` y cada rechazo de autenticación (401) se registran en `activity_logs`.
 - **Live preview:** las rutas `/preview/:id` y `/preview/:id/:screen` usan `RuntimeView` con `meta.preview`. Los cambios sin guardar viajan por `localStorage` (`nexus-preview-draft:<screenId>`, vencen a la hora). La preview no registra "app abierta" en los logs.
 - **Navegación:** `useRouteLoading` expone `isNavigating` y `pendingPath` para la barra de progreso global y los spinners del menú lateral. El indicador aparece después de 150 ms.
+- **Gateway (`query_builder.py`):** dialecto T-SQL para `mssql`: parámetros `?` (pyodbc), identificadores entre `[ ]`, `TOP n` cuando hay límite sin offset, `OFFSET n ROWS FETCH NEXT m ROWS ONLY` para paginar (con `ORDER BY (SELECT NULL)` si no hay orden) y `OUTPUT INSERTED.*` / `OUTPUT DELETED.*` en lugar de `RETURNING`. `postgres` pasa de `$N` a `%s` (psycopg2). MySQL no cambia.
+- **Gateway (`mssql_adapter.py`, `config.py`):** si `database.user` está vacío se usa `Trusted_Connection=yes`, y `user` deja de ser obligatorio para `mssql`. Los cursores se cierran en un `finally`.
 
 #### Notas de despliegue
 
 1. Ejecutar `prisma db push` antes de levantar el backend. Sin las columnas nuevas, fallan las lecturas de `activity_logs`, `entities` y `mcp_keys`.
 2. Opcional: configurar `SUITE_INTERNAL_API_KEY` para habilitar la integración con Suite.
 3. Opcional: configurar `IFRAME_ALLOWED_ORIGINS` si se quiere limitar qué sitios se pueden embeber con el componente Iframe.
+4. Gateway On-Premises: generar y distribuir el ejecutable nuevo. Los clientes con SQL Server o PostgreSQL tienen que actualizar el gateway instalado para recibir el fix. En SQL Server, las tablas con triggers habilitados pueden fallar en update y delete por el uso de `OUTPUT` sin `INTO` (ver QA de NEX-103).
 
 ---
 
