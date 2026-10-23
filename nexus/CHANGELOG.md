@@ -101,7 +101,7 @@ Cada versión tiene dos partes:
 **Mejorado**
 
 - Al cambiar la contraseña, por cualquier camino, se cierran las sesiones abiertas del usuario y se invalidan sus links de recuperación pendientes.
-- En el registro, el texto de ayuda indica qué caracteres especiales se aceptan (@$!%*?&).
+- Las contraseñas aceptan **cualquier carácter especial** (por ejemplo `_ # - . +`), no solo `@ $ ! % * ? &`, y los textos de ayuda lo indican.
 - En el registro y en el restablecimiento de contraseña hay un botón **"← Back to login"** arriba del formulario para volver al inicio de sesión.
 
 #### 🔌 Data Sources
@@ -225,6 +225,7 @@ Cada versión tiene dos partes:
 | NEX-116 | Fixes menores de screen |
 | NEX-121 | Ícono del data source Rocketbot Orchestrator |
 | NEX-124 | Queries por API externa vacías sobre data sources externos (Saturn) |
+| NEX-130 | Validación de contraseñas: cualquier carácter especial |
 | NEX-128 | Indicador de carga al navegar las secciones de una app |
 | NEX-131 | Botón "Back to login" en Register y Reset password |
 | NEX-132 | Se quita el helper de tipo de usuario en Invite |
@@ -273,6 +274,7 @@ Cada versión tiene dos partes:
 | `fix/gateway-mssql` | PR pendiente |
 | `fix/query-api` | PR pendiente (reemplaza a `fix/queryapi`, que se descartó) |
 | `fix/history` | PR pendiente |
+| `fix/password` | PR pendiente |
 
 #### Base de datos
 
@@ -325,6 +327,7 @@ El proyecto no usa archivos de migración: los cambios de `backend/prisma/schema
 - **API externa (`external-api.routes.ts`):** `POST /external/queries/:queryId/execute` acepta id o nombre exacto (si el nombre está repetido en la app responde 400). Las tablas, filas y queries se validan contra la app de la API key: si no existen o son de otra app responden 404 (`GET /tables/:tableId` responde 403). `PUT` y `DELETE /rows/:rowId` aceptan `?tableId=` para filas de tablas virtuales. `DataEngineService` recibe `dataSourceRepository`, `adapterFactory` y `appVariableRepository`, que faltaban en esta ruta.
 - **Compatibilidad de la API externa:** las llamadas a recursos de otra app, que antes funcionaban, ahora fallan, y los "no encontrado" pasan de 400 a 404.
 - **Historial de screens:** `PrismaScreenRepository.createVersion` borra las versiones con `versionNumber <= latest - MAX_SCREEN_VERSIONS` (100, definido en `backend/src/domain/entities/Screen.ts` y duplicado en `frontend/src/types/screen.ts`). `findVersionsByScreenId` devuelve hasta 100 versiones (antes 50) y resuelve `createdByEmail` con una consulta a `users`. Se suma el tipo de versión `import` en el frontend. Documentación: `docs/HISTORIAL_SCREENS.md`.
+- **Contraseñas:** la regla de `UserService`, `PasswordService`, `ResetPasswordModal` y `ResetPasswordView` pasa a `/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d\s]).{8,}$/`: cualquier carácter que no sea letra, número ni espacio cuenta como especial, y el resto de la contraseña admite cualquier carácter. Las contraseñas existentes siguen siendo válidas.
 
 #### Notas de despliegue
 
