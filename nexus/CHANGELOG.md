@@ -132,15 +132,19 @@ Cada versión tiene dos partes:
 **Nuevo**
 
 - Pantalla de inicio por usuario: en la sección Usuarios podés elegir con qué pantalla se abre la app para cada persona. Si esa pantalla se borra, el usuario vuelve a la pantalla de inicio general.
+- Al quitar o reemplazar el logo del header o una imagen del footer, el archivo se elimina del almacenamiento.
 
 **Corregido**
 
 - La vista de edición de una aplicación ahora carga correctamente las entidades.
+- Las imágenes subidas en Header y Footer usan **https** cuando la app se sirve por https. Antes quedaban en http y el navegador las bloqueaba.
 
 **Mejorado**
 
 - La sección Usuarios se simplificó: se quitaron el selector de rol y la leyenda de permisos, que no estaban en uso.
 - Al navegar entre las secciones de una aplicación, el menú lateral y una barra en la parte superior indican que la sección está cargando. Query Manager y Functions ya no muestran "No queries yet" o "No JS functions yet" mientras cargan.
+- Los editores de **Header, Footer y Theme** se rediseñaron y avisan si cerrás o recargás la página con cambios sin guardar.
+- Cada pestaña de la configuración de la app tiene su propia URL: al recargar, la pestaña se mantiene.
 
 #### 🏢 Makers & Owners
 
@@ -233,6 +237,8 @@ Cada versión tiene dos partes:
 | NEX-134 | Tablas con muchas columnas: celdas y campos de edición legibles |
 | NEX-135 | Live preview de apps en una pestaña aparte |
 | NEX-136 | Iframe bloqueado por la CSP `frame-src 'none'` |
+| NEX-137 | Archivos subidos con http en vez de https |
+| NEX-138 | Borrar assets de header y footer; rediseño de los editores |
 | NEX-139 | Historial de screens: email del autor, máximo de 100 versiones, export y documentación |
 | NEX-141 | Zona horaria por entidad |
 | NEX-142 | Activity Logs: registro de modificaciones de tablas, filas y celdas |
@@ -275,6 +281,7 @@ Cada versión tiene dos partes:
 | `fix/query-api` | PR pendiente (reemplaza a `fix/queryapi`, que se descartó) |
 | `fix/history` | PR pendiente |
 | `fix/password` | PR pendiente |
+| `fix/images-footer-header` | PR pendiente |
 
 #### Base de datos
 
@@ -295,6 +302,7 @@ El proyecto no usa archivos de migración: los cambios de `backend/prisma/schema
 | --- | --- |
 | `SUITE_INTERNAL_API_KEY` | **Nueva, opcional.** Clave de al menos 32 caracteres para la integración con Suite (`POST /api/v1/internal/suite/user-info`). Si está vacía, la integración queda deshabilitada. Se genera con `openssl rand -hex 32`. |
 | `IFRAME_ALLOWED_ORIGINS` | **Cambia su efecto.** Ahora también define la `frame-src` del HTML en `/app/*`, `/preview/*` y el editor. Si está vacía, se permite cualquier origen `https:`. Si tiene valores, solo esos orígenes (más `'self'`). |
+| `TRUST_PROXY` | **Nueva, opcional.** Valor de `trust proxy` de Express: cantidad de proxies (`1`), `true`/`false` o lista de IPs/CIDR. Por defecto `1` en desarrollo y apagado en producción. |
 
 #### Endpoints nuevos (`/api/v1`)
 
@@ -314,6 +322,7 @@ El proyecto no usa archivos de migración: los cambios de `backend/prisma/schema
 | `GET /entities/:entityId/activity-logs`, `/metrics` y `/export` | Logs, métricas y export por entidad |
 | `GET /applications/:appId/activity-logs/metrics` y `/export` | Métricas y export por app |
 | `POST /internal/suite/user-info` | Integración con Suite (autenticada con `SUITE_INTERNAL_API_KEY`) |
+| `DELETE /upload/:appId/asset` | Borrar un asset subido de header o footer (body `{ url }`, solo el owner) |
 
 #### Otros cambios técnicos
 
@@ -328,6 +337,8 @@ El proyecto no usa archivos de migración: los cambios de `backend/prisma/schema
 - **Compatibilidad de la API externa:** las llamadas a recursos de otra app, que antes funcionaban, ahora fallan, y los "no encontrado" pasan de 400 a 404.
 - **Historial de screens:** `PrismaScreenRepository.createVersion` borra las versiones con `versionNumber <= latest - MAX_SCREEN_VERSIONS` (100, definido en `backend/src/domain/entities/Screen.ts` y duplicado en `frontend/src/types/screen.ts`). `findVersionsByScreenId` devuelve hasta 100 versiones (antes 50) y resuelve `createdByEmail` con una consulta a `users`. Se suma el tipo de versión `import` en el frontend. Documentación: `docs/HISTORIAL_SCREENS.md`.
 - **Contraseñas:** la regla de `UserService`, `PasswordService`, `ResetPasswordModal` y `ResetPasswordView` pasa a `/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d\s]).{8,}$/`: cualquier carácter que no sea letra, número ni espacio cuenta como especial, y el resto de la contraseña admite cualquier carácter. Las contraseñas existentes siguen siendo válidas.
+- **Assets de header y footer (`AppAssetUploadController`):** `POST /upload/:appId/asset` exige `?kind=header-logo|footer-image` y solo acepta imágenes. Cada app usa un archivo fijo por slot (`header-logo.<ext>`, `footer-image.<ext>`) que se sobrescribe en cada subida (con `?v=` para romper la caché), y se borran las otras extensiones del mismo slot. La URL pública usa `X-Forwarded-Proto` / `X-Forwarded-Host`. En el frontend, `useUploadedAssetCleanup` borra lo subido y no guardado al descartar o desmontar el editor, y lo quitado después de guardar.
+- **Riesgos aceptados del archivo fijo por slot (ver QA de NEX-138):** subir un logo lo cambia en la app publicada antes de guardar; salir sin guardar, o subir otra extensión, borra el logo publicado; varias imágenes subidas al footer comparten el mismo archivo.
 
 #### Notas de despliegue
 
@@ -336,6 +347,7 @@ El proyecto no usa archivos de migración: los cambios de `backend/prisma/schema
 3. Opcional: configurar `IFRAME_ALLOWED_ORIGINS` si se quiere limitar qué sitios se pueden embeber con el componente Iframe.
 4. Gateway On-Premises: generar y distribuir el ejecutable nuevo. Los clientes con SQL Server o PostgreSQL tienen que actualizar el gateway instalado para recibir el fix. En SQL Server, las tablas con triggers habilitados pueden fallar en update y delete por el uso de `OUTPUT` sin `INTO` (ver QA de NEX-103).
 5. Historial de screens: **antes del deploy, hacer backup de `screen_versions`**. Después del deploy, la primera vez que se guarde una screen con más de 100 versiones se borran definitivamente las más antiguas. Para medir el impacto: `SELECT screen_id, COUNT(*) FROM screen_versions GROUP BY screen_id HAVING COUNT(*) > 100;`
+6. Header y footer: las imágenes guardadas antes con `http://` siguen así hasta que se vuelvan a subir o se actualicen en la base. En producción conviene definir `UPLOAD_PUBLIC_BASE_URL` (y, si hace falta, `TRUST_PROXY`) para que las URLs nuevas salgan en https sin depender de los headers del proxy.
 
 ---
 
