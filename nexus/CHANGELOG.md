@@ -278,10 +278,10 @@ Cada versión tiene dos partes:
 | `feature/iframe-element` | #106 |
 | `feature/logs-humans` | #107 |
 | `fix/gateway-mssql` | PR pendiente |
-| `fix/query-api` | PR pendiente (reemplaza a `fix/queryapi`, que se descartó) |
-| `fix/history` | PR pendiente |
-| `fix/password` | PR pendiente |
-| `fix/images-footer-header` | PR pendiente |
+| `fix/query-api` | #109 (reemplaza a `fix/queryapi`, que se descartó) |
+| `fix/history` | #110 |
+| `fix/password` | #111 |
+| `fix/images-footer-header` | #112 |
 
 #### Base de datos
 
