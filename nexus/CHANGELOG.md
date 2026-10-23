@@ -77,6 +77,7 @@ Cada versión tiene dos partes:
 - Descargar una pantalla como archivo JSON, desde el mismo menú.
 - Las pantallas borradas pasan a la sección "Deleted screens", desde donde se pueden restaurar.
 - Borrado permanente desde "Deleted screens", con confirmación previa.
+- **Exportar el historial** de versiones de una pantalla a un archivo JSON, desde el panel History.
 
 **Corregido**
 
@@ -86,6 +87,8 @@ Cada versión tiene dos partes:
 
 - Al borrar una pantalla, su slug queda libre para usarlo en otra.
 - Si no se puede borrar una pantalla, se muestra el motivo real, por ejemplo, que es la única pantalla de la aplicación.
+- El **historial de versiones** muestra el email de quien hizo cada cambio y el tipo de cambio (edición, IA, restauración, borrado o importación).
+- El historial conserva las **últimas 100 versiones** de cada pantalla. Al superar ese número, las más antiguas se eliminan automáticamente.
 
 #### 🔐 Inicio de sesión y contraseñas
 
@@ -228,6 +231,7 @@ Cada versión tiene dos partes:
 | NEX-134 | Tablas con muchas columnas: celdas y campos de edición legibles |
 | NEX-135 | Live preview de apps en una pestaña aparte |
 | NEX-136 | Iframe bloqueado por la CSP `frame-src 'none'` |
+| NEX-139 | Historial de screens: email del autor, máximo de 100 versiones, export y documentación |
 | NEX-141 | Zona horaria por entidad |
 | NEX-144 | MCP: permisos por key y mejoras de logs |
 
@@ -266,6 +270,7 @@ Cada versión tiene dos partes:
 | `feature/logs-humans` | #107 |
 | `fix/gateway-mssql` | PR pendiente |
 | `fix/query-api` | PR pendiente (reemplaza a `fix/queryapi`, que se descartó) |
+| `fix/history` | PR pendiente |
 
 #### Base de datos
 
@@ -317,6 +322,7 @@ El proyecto no usa archivos de migración: los cambios de `backend/prisma/schema
 - **Gateway (`mssql_adapter.py`, `config.py`):** si `database.user` está vacío se usa `Trusted_Connection=yes`, y `user` deja de ser obligatorio para `mssql`. Los cursores se cierran en un `finally`.
 - **API externa (`external-api.routes.ts`):** `POST /external/queries/:queryId/execute` acepta id o nombre exacto (si el nombre está repetido en la app responde 400). Las tablas, filas y queries se validan contra la app de la API key: si no existen o son de otra app responden 404 (`GET /tables/:tableId` responde 403). `PUT` y `DELETE /rows/:rowId` aceptan `?tableId=` para filas de tablas virtuales. `DataEngineService` recibe `dataSourceRepository`, `adapterFactory` y `appVariableRepository`, que faltaban en esta ruta.
 - **Compatibilidad de la API externa:** las llamadas a recursos de otra app, que antes funcionaban, ahora fallan, y los "no encontrado" pasan de 400 a 404.
+- **Historial de screens:** `PrismaScreenRepository.createVersion` borra las versiones con `versionNumber <= latest - MAX_SCREEN_VERSIONS` (100, definido en `backend/src/domain/entities/Screen.ts` y duplicado en `frontend/src/types/screen.ts`). `findVersionsByScreenId` devuelve hasta 100 versiones (antes 50) y resuelve `createdByEmail` con una consulta a `users`. Se suma el tipo de versión `import` en el frontend. Documentación: `docs/HISTORIAL_SCREENS.md`.
 
 #### Notas de despliegue
 
@@ -324,6 +330,7 @@ El proyecto no usa archivos de migración: los cambios de `backend/prisma/schema
 2. Opcional: configurar `SUITE_INTERNAL_API_KEY` para habilitar la integración con Suite.
 3. Opcional: configurar `IFRAME_ALLOWED_ORIGINS` si se quiere limitar qué sitios se pueden embeber con el componente Iframe.
 4. Gateway On-Premises: generar y distribuir el ejecutable nuevo. Los clientes con SQL Server o PostgreSQL tienen que actualizar el gateway instalado para recibir el fix. En SQL Server, las tablas con triggers habilitados pueden fallar en update y delete por el uso de `OUTPUT` sin `INTO` (ver QA de NEX-103).
+5. Historial de screens: **antes del deploy, hacer backup de `screen_versions`**. Después del deploy, la primera vez que se guarde una screen con más de 100 versiones se borran definitivamente las más antiguas. Para medir el impacto: `SELECT screen_id, COUNT(*) FROM screen_versions GROUP BY screen_id HAVING COUNT(*) > 100;`
 
 ---
 
