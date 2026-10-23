@@ -175,6 +175,17 @@ Cada versión tiene dos partes:
 
 - Los registros de actividad del MCP muestran qué key se usó y sobre qué aplicación, e incluyen las conexiones y los intentos rechazados por una key inválida, vencida o revocada.
 
+#### 🔗 API externa
+
+**Nuevo**
+
+- Las queries se pueden ejecutar por **nombre**, además de por id: `POST /api/v1/external/queries/<nombre>/execute`. Sirve para integraciones que no conocen el id o que trabajan con apps importadas en otro entorno.
+
+**Corregido**
+
+- Las queries ejecutadas por API sobre **data sources externos o tablas virtuales** ahora devuelven datos. Antes volvían vacías, por ejemplo al consultarlas desde Saturn. También se aplican las variables de la app.
+- **Seguridad:** una API key solo puede acceder a las tablas, filas y queries de su propia aplicación.
+
 #### 🔌 Integraciones internas
 
 **Nuevo**
@@ -198,6 +209,7 @@ Cada versión tiene dos partes:
 | NEX-62 | Texto: detector de idioma y error falso en el editor JSON |
 | NEX-64 | Edición de app: endpoint de entidades |
 | NEX-75 | Date Range: validación y selector de "Min Date" / "Max Date" |
+| NEX-78 | API externa: ejecutar queries por nombre además de por id |
 | NEX-88 | Soft delete y hard delete de screens |
 | NEX-90 | Métricas de logs |
 | NEX-97 | Restaurar contraseña |
@@ -208,6 +220,7 @@ Cada versión tiene dos partes:
 | NEX-105 | Mover elementos entre contenedores y el canvas |
 | NEX-116 | Fixes menores de screen |
 | NEX-121 | Ícono del data source Rocketbot Orchestrator |
+| NEX-124 | Queries por API externa vacías sobre data sources externos (Saturn) |
 | NEX-128 | Indicador de carga al navegar las secciones de una app |
 | NEX-131 | Botón "Back to login" en Register y Reset password |
 | NEX-132 | Se quita el helper de tipo de usuario en Invite |
@@ -252,6 +265,7 @@ Cada versión tiene dos partes:
 | `feature/iframe-element` | #106 |
 | `feature/logs-humans` | #107 |
 | `fix/gateway-mssql` | PR pendiente |
+| `fix/query-api` | PR pendiente (reemplaza a `fix/queryapi`, que se descartó) |
 
 #### Base de datos
 
@@ -301,6 +315,8 @@ El proyecto no usa archivos de migración: los cambios de `backend/prisma/schema
 - **Navegación:** `useRouteLoading` expone `isNavigating` y `pendingPath` para la barra de progreso global y los spinners del menú lateral. El indicador aparece después de 150 ms.
 - **Gateway (`query_builder.py`):** dialecto T-SQL para `mssql`: parámetros `?` (pyodbc), identificadores entre `[ ]`, `TOP n` cuando hay límite sin offset, `OFFSET n ROWS FETCH NEXT m ROWS ONLY` para paginar (con `ORDER BY (SELECT NULL)` si no hay orden) y `OUTPUT INSERTED.*` / `OUTPUT DELETED.*` en lugar de `RETURNING`. `postgres` pasa de `$N` a `%s` (psycopg2). MySQL no cambia.
 - **Gateway (`mssql_adapter.py`, `config.py`):** si `database.user` está vacío se usa `Trusted_Connection=yes`, y `user` deja de ser obligatorio para `mssql`. Los cursores se cierran en un `finally`.
+- **API externa (`external-api.routes.ts`):** `POST /external/queries/:queryId/execute` acepta id o nombre exacto (si el nombre está repetido en la app responde 400). Las tablas, filas y queries se validan contra la app de la API key: si no existen o son de otra app responden 404 (`GET /tables/:tableId` responde 403). `PUT` y `DELETE /rows/:rowId` aceptan `?tableId=` para filas de tablas virtuales. `DataEngineService` recibe `dataSourceRepository`, `adapterFactory` y `appVariableRepository`, que faltaban en esta ruta.
+- **Compatibilidad de la API externa:** las llamadas a recursos de otra app, que antes funcionaban, ahora fallan, y los "no encontrado" pasan de 400 a 404.
 
 #### Notas de despliegue
 
