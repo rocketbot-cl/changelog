@@ -166,6 +166,7 @@ Cada versión tiene dos partes:
 - **Panel de métricas:** totales, errores, duración promedio, actividad por día de los últimos 14 días, usuarios más activos y cantidad por tipo de acción (apps abiertas, logins, queries, API calls, funciones y uso del MCP).
 - Filtros por estado, método y rango de fechas, **exportación a CSV** (hasta 50.000 registros) y paginación. También están en la pestaña Activity de cada aplicación.
 - Cada registro describe la acción en lenguaje claro, por ejemplo quién borró qué pantalla.
+- Las **modificaciones de tablas**, filas y celdas quedan registradas, ya sea que se hagan desde la app, la API externa o el asistente MCP.
 - **Zona horaria por entidad:** desde Admin → Entities se elige la zona horaria de cada entidad, y la actividad por día se calcula en esa hora local.
 
 #### 🤖 Asistente MCP
@@ -233,6 +234,7 @@ Cada versión tiene dos partes:
 | NEX-136 | Iframe bloqueado por la CSP `frame-src 'none'` |
 | NEX-139 | Historial de screens: email del autor, máximo de 100 versiones, export y documentación |
 | NEX-141 | Zona horaria por entidad |
+| NEX-142 | Activity Logs: registro de modificaciones de tablas, filas y celdas |
 | NEX-144 | MCP: permisos por key y mejoras de logs |
 
 #### Pull requests (Bitbucket)
