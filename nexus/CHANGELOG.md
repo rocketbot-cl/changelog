@@ -277,7 +277,7 @@ Cada versión tiene dos partes:
 | `feature/preview-mode` | #105 |
 | `feature/iframe-element` | #106 |
 | `feature/logs-humans` | #107 |
-| `fix/gateway-mssql` | PR pendiente |
+| `fix/gateway-mssql` | #113 |
 | `fix/query-api` | #109 (reemplaza a `fix/queryapi`, que se descartó) |
 | `fix/history` | #110 |
 | `fix/password` | #111 |
