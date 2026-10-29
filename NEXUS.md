@@ -104,6 +104,7 @@ Todos los cambios relevantes de Nexus, por versión. La versión más nueva va p
 - Nuevo data source AiStudio Rocketbot: conectá una aplicación a AiStudio y consultá sus tasks y resultados como tablas. Es de solo lectura.
 - **Gateway On-Premises con SQL Server:** ahora te podés conectar con autenticación de Windows, sin usuario ni contraseña.
 - **Descargar el Gateway On-Premises desde Nexus:** en la sección Gateway de tu aplicación, el botón de descarga abre una ventana para elegir el sistema operativo (macOS con Apple Silicon o Windows), con los pasos para ponerlo en marcha y un `config.yaml` de ejemplo ya apuntado a tu servidor de Nexus.
+- **Tokens del Gateway On-Premises compartidos por entidad:** los Owners y Makers ven y administran la misma lista de tokens desde la sección Gateway de cualquier aplicación de la entidad, sin importar quién creó cada uno. El estado de conexión de cada token también lo ven todos.
 
 **Corregido**
 
@@ -113,6 +114,7 @@ Todos los cambios relevantes de Nexus, por versión. La versión más nueva va p
 **Mejorado**
 
 - El formulario de data sources marca los campos obligatorios con un asterisco. Al guardar, señala el primer campo que falta con un mensaje de error, en lugar de dejar el botón deshabilitado.
+- Al elegir el token de un data source Gateway, los tokens revocados aparecen deshabilitados con la marca "(Revoked)". Un data source Gateway solo puede usar un token activo de la misma entidad que la aplicación.
 
 #### 📊 Datos y tablas
 
@@ -149,11 +151,14 @@ Todos los cambios relevantes de Nexus, por versión. La versión más nueva va p
 - Al navegar entre las secciones de una aplicación, el menú lateral y una barra en la parte superior indican que la sección está cargando. Query Manager y Functions ya no muestran "No queries yet" o "No JS functions yet" mientras cargan.
 - Los editores de **Header, Footer y Theme** se rediseñaron y avisan si cerrás o recargás la página con cambios sin guardar.
 - Cada pestaña de la configuración de la app tiene su propia URL: al recargar, la pestaña se mantiene.
+- Si una aplicación no se puede abrir, se muestra el motivo en lugar de un mensaje genérico.
 
 #### 🏢 Makers & Owners
 
 **Nuevo**
 
+- **Los Owners administran todas las aplicaciones de su entidad**, incluidas las creadas por sus Makers: pantallas, tablas, queries, API calls, funciones, variables, API keys, data sources y actividad.
+- El Dashboard muestra a qué entidad pertenece cada aplicación: en la tarjeta, junto a la fecha, y en la nueva columna "Entity" de la vista de tabla.
 - Ahora podés cambiar el rol de un miembro (Owner o Maker) directamente desde la tabla de miembros en Team.
 - Filtro por rol en la tabla de miembros, con un contador de resultados.
 
@@ -209,6 +214,8 @@ Todos los cambios relevantes de Nexus, por versión. La versión más nueva va p
 ### ⚠️ Antes y después de actualizar
 
 - **Gateway On-Premises:** si te conectás a SQL Server o PostgreSQL a través del gateway, descargá la versión nueva desde la sección Gateway de tu aplicación e instalala para recibir las correcciones.
+- **Gateway On-Premises:** los tokens ahora pertenecen a la entidad. Revisá la lista en la sección Gateway: si falta algún token que usabas, contactá a soporte para asignarlo a tu entidad. Los gateways ya instalados siguen funcionando sin cambios.
+- **Owners de entidad:** en el Dashboard vas a ver también las aplicaciones creadas por los Makers de tu entidad, y vas a poder editarlas.
 - **Header y Footer:** si una imagen que subiste antes de esta versión no se ve, volvé a subirla desde el editor.
 - **Header y Footer:** al subir un logo o una imagen nueva, el cambio se ve enseguida en la app publicada. Guardá siempre antes de salir del editor.
 - **Historial de versiones:** cada pantalla conserva sus últimas 100 versiones. Las más antiguas se eliminan automáticamente y no se pueden recuperar.
