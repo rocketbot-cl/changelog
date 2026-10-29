@@ -97,12 +97,6 @@ Todos los cambios relevantes de Rocketbot Orchestrator, por versión. La versió
 - Mensajes de error más claros al crear o editar usuarios (nombre, email, teléfono y contraseña), en lugar de un mensaje genérico.
 - Si se vence el tiempo para elegir la empresa al iniciar sesión, el mensaje lo explica y pide volver a ingresar.
 
-#### 🏃 Clientes Runner
-
-**Nuevo**
-
-- Desde **Clients**, un administrador de la plataforma puede marcar un cliente como **Runner**.
-
 #### 🧭 Menú lateral
 
 **Mejorado**
