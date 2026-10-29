@@ -2,7 +2,7 @@
 
 Todos los cambios relevantes de Saturn Studio, por versión. Cada versión lista las novedades para quienes usan la herramienta: funciones nuevas, mejoras visuales y errores corregidos.
 
-## [2.1.0]
+## [2.1.0] - 2026-11-10
 
 
 ### Novedades
@@ -110,7 +110,7 @@ Todos los cambios relevantes de Saturn Studio, por versión. Cada versión lista
 - Mensajes del cronograma traducidos. En español, "Schedule" pasa a llamarse "Cronograma".
 
 **Corregido**
-- Un valor de cron inválido ya no afecta el funcionamiento del servicio.
+- Los cronogramas con una expresión cron inválida se rechazan al guardar.
 
 ---
 
@@ -129,7 +129,7 @@ Todos los cambios relevantes de Saturn Studio, por versión. Cada versión lista
 - La búsqueda por comando marca qué días tienen ejecuciones que coinciden. Los días con demasiadas ejecuciones para revisar aparecen como "No verificado".
 
 **Corregido**
-- Los miembros de una entidad pueden ver los logs de los robots que no son suyos.
+- Los miembros de una entidad ya pueden ver los logs de los robots compartidos con ella.
 - Se quitó el espacio sobrante entre mensajes en la ventana de logs.
 
 ---
@@ -146,10 +146,10 @@ Todos los cambios relevantes de Saturn Studio, por versión. Cada versión lista
 - **Editar y borrar carpetas** desde el árbol de carpetas.
 - **Aviso al abrir el robot de otro miembro**: puedes editarlo y ejecutarlo, pero los cronogramas, los webhooks y la eliminación quedan a cargo de su dueño.
 - En los robots compartidos, las credenciales de otro miembro indican de quién son.
+- Clonar un robot compartido crea una copia sin credenciales, para que uses las tuyas.
 
 **Mejorado**
 - El panel de carpetas queda fijo al costado mientras bajas por la lista de robots, así puedes arrastrar cualquier robot a una carpeta.
-- Al clonar un robot compartido, el robot se copia sin las credenciales del dueño.
 
 **Corregido**
 - Los usuarios de una entidad pueden probar los robots en desarrollo.
@@ -243,4 +243,4 @@ Todos los cambios relevantes de Saturn Studio, por versión. Cada versión lista
 #### 🔒 Seguridad
 
 **Mejorado**
-- Más protección en las notas, los títulos de los comandos y la gestión de archivos ante contenido malicioso.
+- Mejoras generales de seguridad.
