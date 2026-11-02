@@ -168,7 +168,7 @@ Todos los cambios relevantes de Nexus, por versión. La versión más nueva va p
 - En entidades inactivas o vencidas no se pueden cambiar roles ni quitar miembros. Los controles deshabilitados explican por qué.
 - Un aviso advierte cuando un Owner está por quitarse a sí mismo de la entidad.
 - El buscador de miembros ahora filtra solo por email y se quitó la columna "Platform Role".
-- Para agregar un Maker u Owner, se escribe el **email completo** de la persona. Las sugerencias de usuarios mientras escribís quedan solo para los administradores de la plataforma.
+- Para agregar un Maker u Owner, se escribe el **email completo** de la persona.
 - El badge del plan ahora es índigo, para no confundirlo con el badge rojo "Inactive".
 - El botón Team del Dashboard ahora es un ícono, con el tooltip "Manage Makers & Owners".
 
