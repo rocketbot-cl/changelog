@@ -215,6 +215,10 @@ Todos los cambios relevantes de Nexus, por versión. La versión más nueva va p
 
 - El botón **Test** del editor de API Calls ahora prueba lo que tenés en el formulario, aunque todavía no lo hayas guardado. Antes probaba la última versión guardada, por lo que había que darle a **Update** antes de cada prueba.
 
+#### Hotfix: Tiempo de espera de API Calls
+
+- El tiempo máximo de espera de las API Calls ahora se puede ajustar en el servidor de Nexus. Por defecto sigue siendo de 30 segundos. Si alguna API externa que usás tarda más, contactá a soporte para ampliarlo.
+
 ### ⚠️ Antes y después de actualizar
 
 - **Gateway On-Premises:** si te conectás a SQL Server o PostgreSQL a través del gateway, descargá la versión nueva desde la sección Gateway de tu aplicación e instalala para recibir las correcciones.
