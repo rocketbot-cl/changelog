@@ -168,6 +168,7 @@ Todos los cambios relevantes de Nexus, por versión. La versión más nueva va p
 - En entidades inactivas o vencidas no se pueden cambiar roles ni quitar miembros. Los controles deshabilitados explican por qué.
 - Un aviso advierte cuando un Owner está por quitarse a sí mismo de la entidad.
 - El buscador de miembros ahora filtra solo por email y se quitó la columna "Platform Role".
+- Para agregar un Maker u Owner, se escribe el **email completo** de la persona.
 - El badge del plan ahora es índigo, para no confundirlo con el badge rojo "Inactive".
 - El botón Team del Dashboard ahora es un ícono, con el tooltip "Manage Makers & Owners".
 
@@ -216,6 +217,7 @@ Todos los cambios relevantes de Nexus, por versión. La versión más nueva va p
 - **Gateway On-Premises:** si te conectás a SQL Server o PostgreSQL a través del gateway, descargá la versión nueva desde la sección Gateway de tu aplicación e instalala para recibir las correcciones.
 - **Gateway On-Premises:** los tokens ahora pertenecen a la entidad. Revisá la lista en la sección Gateway: si falta algún token que usabas, contactá a soporte para asignarlo a tu entidad. Los gateways ya instalados siguen funcionando sin cambios.
 - **Owners de entidad:** en el Dashboard vas a ver también las aplicaciones creadas por los Makers de tu entidad, y vas a poder editarlas.
+- **Makers & Owners:** para agregar un miembro a tu entidad, escribí su email completo. Ya no aparecen sugerencias de usuarios mientras escribís.
 - **Header y Footer:** si una imagen que subiste antes de esta versión no se ve, volvé a subirla desde el editor.
 - **Header y Footer:** al subir un logo o una imagen nueva, el cambio se ve enseguida en la app publicada. Guardá siempre antes de salir del editor.
 - **Historial de versiones:** cada pantalla conserva sus últimas 100 versiones. Las más antiguas se eliminan automáticamente y no se pueden recuperar.
