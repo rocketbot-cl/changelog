@@ -211,6 +211,10 @@ Todos los cambios relevantes de Nexus, por versión. La versión más nueva va p
 - La consulta es solo entre servidores, con una clave interna, y no usa la sesión del usuario.
 - No cambia nada para el usuario final dentro de Nexus.
 
+#### Hotfix: Respuesta al ejecutar queries
+
+- Ejecutar una query desde la API externa o desde el asistente MCP ahora devuelve la misma respuesta que desde la app: los resultados junto con la aplicación, la tabla, el tipo de query y la operación. Antes, la API externa no incluía esa información y el asistente MCP devolvía solo los resultados.
+
 ### ⚠️ Antes y después de actualizar
 
 - **Gateway On-Premises:** si te conectás a SQL Server o PostgreSQL a través del gateway, descargá la versión nueva desde la sección Gateway de tu aplicación e instalala para recibir las correcciones.
